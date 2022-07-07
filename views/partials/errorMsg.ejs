@@ -1,0 +1,13 @@
+<% if (errors.nameError == undefined 
+&& errors.emailError == undefined 
+&& errors.passwordError == undefined
+&& errors.paramsError == undefined) { %>
+   <!-- Não mostra nada -->
+<% } else { %>
+   <div class="c-error-msg">
+      <p><%= errors.nameError %></p>
+      <p><%= errors.emailError %></p>
+      <p><%= errors.passwordError %></p>
+      <p><%= errors.paramsError %></p>
+   </div>
+<% } %>  

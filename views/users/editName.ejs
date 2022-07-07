@@ -1,0 +1,14 @@
+<%- include('../partials/header.ejs') %> 
+<body>
+   <%- include('../partials/navbar.ejs') %> 
+   <div class="container">
+      <h1 class="title">Insira seu novo nome</h1>
+      <%- include('../partials/errorMsg.ejs') %> 
+      <form class="form-update" method="post" action="/user/update/name">
+         <label for="name">Nome</label>
+         <input type="text" id="name" name="name" placeholder="Digite seu novo nome" value="<%= user.name %>">
+         <button class="btn" type="submit">Atualizar</button>
+      </form>
+   </div>   
+</body>
+</html>
