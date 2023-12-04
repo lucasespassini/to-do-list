@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const database = require('../database/connection')
+const database = require('../database/connection').default
 const bcrypt = require('bcryptjs')
 const validator = require('validator')
 const checkLogin = require('../middlewares/checkLogin')
@@ -77,7 +77,7 @@ router.post('/user/create', (req, res) => {
 
       req.flash('name', name)
       req.flash('email', email)
-   
+
       res.redirect('/user/signup')
    } else {
       database.select().where({
@@ -86,7 +86,7 @@ router.post('/user/create', (req, res) => {
          if (user[0] == undefined) {
             var salt = bcrypt.genSaltSync(10)
             var hash = bcrypt.hashSync(password, salt)
-   
+
             await database.insert({
                name: name,
                email: email,
@@ -166,7 +166,7 @@ router.post('/user/authenticate', (req, res) => {
       req.flash('passwordError', passwordError)
 
       req.flash('email', email)
-   
+
       res.redirect('/user/signin')
    } else {
       database.select().where({
@@ -175,7 +175,7 @@ router.post('/user/authenticate', (req, res) => {
          if (user[0] != undefined) { // se existir usuário com esse email
             // validar senha
             var correct = bcrypt.compareSync(password, user[0].password)
-   
+
             if (correct) {
                req.session.user = {
                   id: user[0].id,
@@ -245,12 +245,12 @@ router.get('/user/edit/name/:id', checkLogin, (req, res) => {
    if (isNaN(paramsId)) {
       paramsError = 'Solicitação inválida.'
       req.flash('paramsError', paramsError)
-      res.redirect('/user/edit/name/'+sessionId)
+      res.redirect('/user/edit/name/' + sessionId)
    } else {
       if (paramsId != sessionId) {
          paramsError = 'Não autorizado.'
          req.flash('paramsError', paramsError)
-         res.redirect('/user/edit/name/'+sessionId)
+         res.redirect('/user/edit/name/' + sessionId)
       } else {
          database.select().where({
             id: sessionId
@@ -289,7 +289,7 @@ router.post('/user/update/name', checkLogin, (req, res) => {
 
       if (nameError != undefined) {
          req.flash('nameError', nameError)
-         res.redirect('/user/edit/name/'+sessionId)
+         res.redirect('/user/edit/name/' + sessionId)
       } else {
          await database.where({
             id: sessionId
@@ -302,10 +302,10 @@ router.post('/user/update/name', checkLogin, (req, res) => {
          }).catch(err => {
             nameError = 'Não foi possível alterar o nome.'
             req.flash('nameError', nameError)
-            res.redirect('/user/edit/name/'+sessionId)
+            res.redirect('/user/edit/name/' + sessionId)
          })
       }
-   }) 
+   })
 })
 
 router.get('/user/edit/password/:id', checkLogin, (req, res) => {
@@ -329,12 +329,12 @@ router.get('/user/edit/password/:id', checkLogin, (req, res) => {
    if (isNaN(paramsId)) {
       paramsError = 'Solicitação inválida.'
       req.flash('paramsError', paramsError)
-      res.redirect('/user/edit/password/'+sessionId)
+      res.redirect('/user/edit/password/' + sessionId)
    } else {
       if (paramsId != sessionId) {
          paramsError = 'Não autorizado.'
          req.flash('paramsError', paramsError)
-         res.redirect('/user/edit/password/'+sessionId)
+         res.redirect('/user/edit/password/' + sessionId)
       } else {
          database.select().where({
             id: sessionId
@@ -352,13 +352,13 @@ router.get('/user/edit/password/:id', checkLogin, (req, res) => {
 })
 
 router.post('/user/update/password', checkLogin, (req, res) => {
-   var sessionId= req.session.user.id
+   var sessionId = req.session.user.id
    var oldPassword = req.body.oldPassword
    var newPassword = req.body.newPassword
 
    var passwordError
    var successMsg
-   
+
    database.select().where({
       id: sessionId
    }).table('users').then(async user => {
@@ -371,13 +371,13 @@ router.post('/user/update/password', checkLogin, (req, res) => {
 
       if (passwordError != undefined) {
          req.flash('passwordError', passwordError)
-         res.redirect('/user/edit/password/'+sessionId)
+         res.redirect('/user/edit/password/' + sessionId)
       } else {
          if (bcrypt.compareSync(oldPassword, user[0].password)) {
             if (bcrypt.compareSync(newPassword, user[0].password)) {
                passwordError = 'A nova senha não pode ser igual a anterior.'
                req.flash('passwordError', passwordError)
-               res.redirect('/user/edit/password/'+sessionId)
+               res.redirect('/user/edit/password/' + sessionId)
             } else {
                var salt = bcrypt.genSaltSync(10)
                var newHash = bcrypt.hashSync(newPassword, salt)
@@ -392,16 +392,16 @@ router.post('/user/update/password', checkLogin, (req, res) => {
                }).catch(err => {
                   passwordError = 'Não foi possível alterar a senha.'
                   req.flash('passwordError', passwordError)
-                  res.redirect('/user/edit/password/'+sessionId)
+                  res.redirect('/user/edit/password/' + sessionId)
                })
-            } 
+            }
          } else {
             passwordError = 'Senha incorreta.'
             req.flash('passwordError', passwordError)
-            res.redirect('/user/edit/password/'+sessionId)
+            res.redirect('/user/edit/password/' + sessionId)
          }
       }
-   }) 
+   })
 })
 
 router.post('/user/delete', checkLogin, (req, res) => {

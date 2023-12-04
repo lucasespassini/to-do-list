@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const database = require('../database/connection')
+const database = require('../database/connection').default
 
 router.post('/to-do/create', async (req, res) => {
    try {
