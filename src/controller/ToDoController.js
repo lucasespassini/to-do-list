@@ -1,40 +1,35 @@
-const express = require('express')
-const router = express.Router()
-const database = require('../database/connection').default
+import { Router } from "express";
+import { knex } from "../database/connection.js";
+const todoRouter = Router();
 
-router.post('/to-do/create', async (req, res) => {
-   try {
-      const id = req.session.user.id
-      const conteudo = req.body.conteudo
+todoRouter.post("/to-do/create", async (req, res) => {
+  const { id } = req.session.user;
+  const { conteudo } = req.body;
 
-      await database.insert({
-         conteudo: conteudo,
-         userId: id
-      }).into('to_dos')
+  try {
+    await knex
+      .insert({
+        conteudo,
+        userId: id,
+      })
+      .into("to_dos");
+    res.redirect("/");
+  } catch (error) {
+    res.redirect("/");
+  }
+});
 
-      res.redirect('/')
-   } catch (error) {
-      res.redirect('/')
-   }
-})
+todoRouter.post("/to-do/delete", async (req, res) => {
+  const { id } = req.body;
 
-router.post('/to-do/delete', async (req, res) => {
-   const id = req.body.id
+  if (!id || isNaN(id)) res.redirect("/");
 
-   if (id != undefined) {
-      if (!isNaN(id)) {
-         try {
-            await database.where({ id: id }).delete().table('to_dos')
-            res.redirect('/')
-         } catch (error) {
-            res.redirect('/')
-         }
-      } else {
-         res.redirect('/')
-      }
-   } else {
-      res.redirect('/')
-   }
-})
+  try {
+    await knex.where({ id }).delete().table("to_dos");
+    res.redirect("/");
+  } catch (error) {
+    res.redirect("/");
+  }
+});
 
-module.exports = router
+export { todoRouter };

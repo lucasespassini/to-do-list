@@ -1,40 +1,35 @@
-const express = require('express')
-const router = express.Router()
-const database = require('../database/connection').default
+import { Router } from "express";
+import { knex } from "../database/connection.js";
+const noteRouter = Router();
 
-router.post('/note/create', async (req, res) => {
-   try {
-      const id = req.session.user.id
-      const conteudo = req.body.conteudo
+noteRouter.post("/note/create", async (req, res) => {
+  const { id } = req.session.user;
+  const { conteudo } = req.body;
 
-      await database.insert({
-         conteudo: conteudo,
-         userId: id
-      }).into('notes')
+  try {
+    await knex
+      .insert({
+        conteudo,
+        userId: id,
+      })
+      .into("notes");
+    res.redirect("/");
+  } catch (error) {
+    res.redirect("/");
+  }
+});
 
-      res.redirect('/')
-   } catch (error) {
-      res.redirect('/')
-   }
-})
+noteRouter.post("/note/delete", async (req, res) => {
+  const { id } = req.body;
 
-router.post('/note/delete', async (req, res) => {
-   const id = req.body.id
+  if (!id || isNaN(id)) res.redirect("/");
 
-   if (id != undefined) {
-      if (!isNaN(id)) {
-         try {
-            await database.where({ id: id }).delete().table('notes')
-            res.redirect('/')
-         } catch (error) {
-            res.redirect('/')
-         }
-      } else {
-         res.redirect('/')
-      }
-   } else {
-      res.redirect('/')
-   }
-})
+  try {
+    await knex.where({ id }).delete().table("notes");
+    res.redirect("/");
+  } catch (error) {
+    res.redirect("/");
+  }
+});
 
-module.exports = router
+export { noteRouter };

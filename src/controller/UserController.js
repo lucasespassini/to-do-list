@@ -1,422 +1,234 @@
-const express = require('express')
-const router = express.Router()
-const database = require('../database/connection').default
-const bcrypt = require('bcryptjs')
-const validator = require('validator')
-const checkLogin = require('../middlewares/checkLogin')
+import bcryptjs from "bcryptjs";
+import { Router } from "express";
+import validator from "validator";
+import { knex } from "../database/connection.js";
+import { verifyAuth } from "../middlewares/verifyAuth.js";
+const userRouter = Router();
 
-router.get('/user/signup', (req, res) => {
-   let nameError = req.flash('nameError')
-   let emailError = req.flash('emailError')
-   let passwordError = req.flash('passwordError')
-   let successMsg = req.flash('successMsg')
+userRouter.get("/user/signup", (req, res) => {
+  res.render("users/signUp", {
+    errors: {
+      nameError: req.flash("nameError"),
+      emailError: req.flash("emailError"),
+      passwordError: req.flash("passwordError"),
+    },
+    successMsg: req.flash("successMsg"),
+    name: req.flash("name"),
+    email: req.flash("email"),
+  });
+});
 
-   if (nameError != undefined) {
-      if (nameError.length == 0) {
-         nameError = undefined
-      }
-   }
-   if (emailError != undefined) {
-      if (emailError.length == 0) {
-         emailError = undefined
-      }
-   }
-   if (passwordError != undefined) {
-      if (passwordError.length == 0) {
-         passwordError = undefined
-      }
-   }
-   if (successMsg != undefined) {
-      if (successMsg.length == 0) {
-         successMsg = undefined
-      }
-   }
+userRouter.post("/user/create", async (req, res) => {
+  const { name, email, password } = req.body;
 
-   res.render('users/signUp', {
-      errors: {
-         nameError,
-         emailError,
-         passwordError
-      },
-      successMsg,
-      name: req.flash('name'),
-      email: req.flash('email')
-   })
-})
+  const errors = {};
 
-router.post('/user/create', (req, res) => {
-   let { name, email, password } = req.body
+  if (name.length < 3)
+    errors.nameError = "O nome não pode ter menos de 3 caracteres.";
 
-   var nameError
-   var emailError
-   var passwordError
+  if (!validator.isEmail(email)) errors.emailError = "O e-mail não é válido.";
 
-   if (name.length < 3) {
-      nameError = 'O nome não pode ter menos de 3 caracteres.'
-   }
-   if (name == undefined || name == '') {
-      nameError = 'O nome não pode ser vazio.'
-   }
-   if (validator.isEmail(email) == false) {
-      emailError = 'O e-mail não é válido.'
-   }
-   if (email == undefined || email == '') {
-      emailError = 'O e-mail não pode ser vazio.'
-   }
-   if (password.length < 5) {
-      passwordError = 'A senha não pode ter menos de 5 caracteres.'
-   }
-   if (password == undefined || password == '') {
-      passwordError = 'A senha não pode ser vazia.'
-   }
+  if (password.length < 5)
+    errors.passwordError = "A senha não pode ter menos de 5 caracteres.";
 
-   if (nameError != undefined || emailError != undefined || passwordError != undefined) {
-      req.flash('nameError', nameError)
-      req.flash('emailError', emailError)
-      req.flash('passwordError', passwordError)
+  if (Object.keys(errors).length > 0) {
+    req.flash("nameError", errors.nameError);
+    req.flash("emailError", errors.emailError);
+    req.flash("passwordError", errors.passwordError);
 
-      req.flash('name', name)
-      req.flash('email', email)
+    req.flash("name", name);
+    req.flash("email", email);
 
-      res.redirect('/user/signup')
-   } else {
-      database.select().where({
-         email: email
-      }).table('users').then(async user => {
-         if (user[0] == undefined) {
-            var salt = bcrypt.genSaltSync(10)
-            var hash = bcrypt.hashSync(password, salt)
+    return res.redirect("/user/signup");
+  }
 
-            await database.insert({
-               name: name,
-               email: email,
-               password: hash
-            }).into('users').then(() => {
-               database.select().where({
-                  email: email
-               }).table('users').then(user => {
-                  req.session.user = {
-                     id: user[0].id,
-                     email: user[0].email
-                  }
-                  res.redirect('/')
-               })
-            })
-         } else {
-            emailError = 'Esse e-mail já está cadastrado.'
-            req.flash('nameError', nameError)
-            req.flash('emailError', emailError)
-            req.flash('passwordError', passwordError)
+  const [user] = await knex.select().where({ email }).table("users");
 
-            req.flash('name', name)
-            req.flash('email', email)
+  if (user) {
+    req.flash("emailError", "Esse e-mail já está cadastrado.");
 
-            res.redirect('/user/signup')
-         }
-      })
-   }
-})
+    req.flash("name", name);
+    req.flash("email", email);
 
-router.get('/user/signin', (req, res) => {
-   var nameError = req.flash('nameError')
-   var emailError = req.flash('emailError')
-   var passwordError = req.flash('passwordError')
+    return res.redirect("/user/signup");
+  }
 
-   if (nameError != undefined) {
-      if (nameError.length == 0) {
-         nameError = undefined
-      }
-   }
-   if (emailError != undefined) {
-      if (emailError.length == 0) {
-         emailError = undefined
-      }
-   }
-   if (passwordError != undefined) {
-      if (passwordError.length == 0) {
-         passwordError = undefined
-      }
-   }
+  await knex
+    .insert({
+      name,
+      email,
+      password: bcryptjs.hashSync(password, 10),
+    })
+    .into("users");
 
-   res.render('users/signIn', {
-      errors: {
-         nameError,
-         emailError,
-         passwordError
-      },
-      email: req.flash('email')
-   })
-})
+  const [newUser] = await knex.select().where({ email }).table("users");
 
-router.post('/user/authenticate', (req, res) => {
-   var { email, password } = req.body
+  req.session.user = {
+    id: newUser.id,
+    email: newUser.email,
+  };
 
-   var emailError
-   var passwordError
+  res.redirect("/");
+});
 
-   if (validator.isEmail(email) == false) {
-      emailError = 'O e-mail não é válido.'
-   }
-   if (email == undefined || email == '') {
-      emailError = 'O e-mail não pode ser vazio.'
-   }
+userRouter.get("/user/signin", (req, res) => {
+  res.render("users/signIn", {
+    errors: {
+      nameError: req.flash("nameError"),
+      emailError: req.flash("emailError"),
+      passwordError: req.flash("passwordError"),
+    },
+    email: req.flash("email"),
+  });
+});
 
-   if (emailError != undefined) {
-      req.flash('emailError', emailError)
-      req.flash('passwordError', passwordError)
+userRouter.post("/user/authenticate", async (req, res) => {
+  const { email, password } = req.body;
 
-      req.flash('email', email)
+  const errors = {};
 
-      res.redirect('/user/signin')
-   } else {
-      database.select().where({
-         email: email
-      }).table('users').then(user => {
-         if (user[0] != undefined) { // se existir usuário com esse email
-            // validar senha
-            var correct = bcrypt.compareSync(password, user[0].password)
+  if (!validator.isEmail(email)) errors.emailError = "O e-mail não é válido.";
 
-            if (correct) {
-               req.session.user = {
-                  id: user[0].id,
-                  email: user[0].email
-               }
-               res.redirect('/')
-            } else {
-               passwordError = 'Senha incorreta.'
-               req.flash('passwordError', passwordError)
-               res.redirect('/user/signin')
-            }
-         } else {
-            emailError = 'Não existe usuário com esse e-mail.'
-            req.flash('emailError', emailError)
+  if (Object.keys(errors).length > 0) {
+    req.flash("emailError", errors.emailError);
+    req.flash("email", email);
 
-            req.flash('email', email)
-            res.redirect('/user/signin')
-         }
-      })
-   }
-})
+    return res.redirect("/user/signin");
+  }
 
-router.get('/user/logout', checkLogin, (req, res) => {
-   req.session.user = undefined
-   res.redirect('/user/signin')
-})
+  const [user] = await knex.select().where({ email }).table("users");
 
-// Edição de dados
-router.get('/user/edit', checkLogin, (req, res) => {
-   var sessionId = req.session.user.id
-   var successMsg = req.flash('successMsg')
+  if (!user) {
+    req.flash("emailError", "Não existe usuário com esse e-mail.");
+    req.flash("email", email);
+    return res.redirect("/user/signin");
+  }
 
-   if (successMsg != undefined) {
-      if (successMsg.length == 0) {
-         successMsg = undefined
-      }
-   }
+  if (!bcryptjs.compareSync(password, user.password)) {
+    req.flash("passwordError", "Senha incorreta.");
+    return res.redirect("/user/signin");
+  }
 
-   database.select().where({
-      id: sessionId
-   }).table('users').then(user => {
-      res.render('users/account', {
-         successMsg,
-         user: user[0]
-      })
-   })
-})
+  req.session.user = {
+    id: user.id,
+    email: user.email,
+  };
 
-router.get('/user/edit/name/:id', checkLogin, (req, res) => {
-   var paramsId = req.params.id
-   var sessionId = req.session.user.id
+  res.redirect("/");
+});
 
-   var nameError = req.flash('nameError')
-   var paramsError = req.flash('paramsError')
+userRouter.get("/user/logout", verifyAuth, (req, res) => {
+  req.session.user = undefined;
+  return res.redirect("/user/signin");
+});
 
-   if (nameError != undefined) {
-      if (nameError.length == 0) {
-         nameError = undefined
-      }
-   }
-   if (paramsError != undefined) {
-      if (paramsError.length == 0) {
-         paramsError = undefined
-      }
-   }
+userRouter.get("/user/edit", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
 
-   if (isNaN(paramsId)) {
-      paramsError = 'Solicitação inválida.'
-      req.flash('paramsError', paramsError)
-      res.redirect('/user/edit/name/' + sessionId)
-   } else {
-      if (paramsId != sessionId) {
-         paramsError = 'Não autorizado.'
-         req.flash('paramsError', paramsError)
-         res.redirect('/user/edit/name/' + sessionId)
-      } else {
-         database.select().where({
-            id: sessionId
-         }).table('users').then(user => {
-            res.render('users/editName', {
-               errors: {
-                  nameError,
-                  paramsError
-               },
-               user: user[0]
-            })
-         })
-      }
-   }
-})
+  const user = await knex.select().where({ id }).table("users");
 
-router.post('/user/update/name', checkLogin, (req, res) => {
-   var sessionId = req.session.user.id
-   var newName = req.body.name
+  res.render("users/account", {
+    successMsg: req.flash("successMsg"),
+    user: user[0],
+  });
+});
 
-   var nameError
-   var successMsg
+userRouter.get("/user/edit/name", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
 
-   database.select().where({
-      id: sessionId
-   }).table('users').then(async user => {
-      if (newName == user[0].name) {
-         nameError = 'O nome digitado não pode ser igual ao anterior.'
-      }
-      if (newName.length < 3) {
-         nameError = 'O nome não pode ter menos de 3 caracteres.'
-      }
-      if (newName == undefined || newName == '') {
-         nameError = 'O nome não pode ser vazio.'
-      }
+  const [user] = await knex.select().where({ id }).table("users");
+  res.render("users/editName", {
+    errors: { nameError: req.flash("nameError") },
+    user: user,
+  });
+});
 
-      if (nameError != undefined) {
-         req.flash('nameError', nameError)
-         res.redirect('/user/edit/name/' + sessionId)
-      } else {
-         await database.where({
-            id: sessionId
-         }).update({
-            name: newName
-         }).table('users').then(() => {
-            successMsg = 'Nome alterado com sucesso.'
-            req.flash('successMsg', successMsg)
-            res.redirect('/user/edit')
-         }).catch(err => {
-            nameError = 'Não foi possível alterar o nome.'
-            req.flash('nameError', nameError)
-            res.redirect('/user/edit/name/' + sessionId)
-         })
-      }
-   })
-})
+userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
+  const { name } = req.body;
 
-router.get('/user/edit/password/:id', checkLogin, (req, res) => {
-   var paramsId = req.params.id
-   var sessionId = req.session.user.id
+  const errors = {};
+  const [user] = await knex.select().where({ id }).table("users");
 
-   var passwordError = req.flash('passwordError')
-   var paramsError = req.flash('paramsError')
+  if (name === user.name)
+    errors.nameError = "O nome digitado não pode ser igual ao anterior.";
+  if (name.length < 3)
+    errors.nameError = "O nome não pode ter menos de 3 caracteres.";
 
-   if (passwordError != undefined) {
-      if (passwordError.length == 0) {
-         passwordError = undefined
-      }
-   }
-   if (paramsError != undefined) {
-      if (paramsError.length == 0) {
-         paramsError = undefined
-      }
-   }
+  if (Object.keys(errors).length > 0) {
+    req.flash("nameError", errors.nameError);
+    return res.redirect(`/user/edit/name/${id}`);
+  }
 
-   if (isNaN(paramsId)) {
-      paramsError = 'Solicitação inválida.'
-      req.flash('paramsError', paramsError)
-      res.redirect('/user/edit/password/' + sessionId)
-   } else {
-      if (paramsId != sessionId) {
-         paramsError = 'Não autorizado.'
-         req.flash('paramsError', paramsError)
-         res.redirect('/user/edit/password/' + sessionId)
-      } else {
-         database.select().where({
-            id: sessionId
-         }).table('users').then(user => {
-            res.render('users/editPassword', {
-               errors: {
-                  passwordError,
-                  paramsError
-               },
-               user: user[0]
-            })
-         })
-      }
-   }
-})
+  try {
+    await knex.where({ id }).update({ name }).table("users");
+    req.flash("successMsg", "Nome alterado com sucesso.");
+    res.redirect("/user/edit");
+  } catch (error) {
+    req.flash("nameError", "Não foi possível alterar o nome.");
+    res.redirect(`/user/edit/name/${id}`);
+  }
+});
 
-router.post('/user/update/password', checkLogin, (req, res) => {
-   var sessionId = req.session.user.id
-   var oldPassword = req.body.oldPassword
-   var newPassword = req.body.newPassword
+userRouter.get("/user/edit/password", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
 
-   var passwordError
-   var successMsg
+  const [user] = await knex.select().where({ id }).table("users");
 
-   database.select().where({
-      id: sessionId
-   }).table('users').then(async user => {
-      if (newPassword.length < 5) {
-         passwordError = 'A nova senha não pode ter menos de 5 caracteres.'
-      }
-      if (newPassword == undefined || newPassword == '') {
-         passwordError = 'A nova senha não pode ser vazia.'
-      }
+  res.render("users/editPassword", {
+    errors: {
+      passwordError: req.flash("passwordError"),
+    },
+    user: user,
+  });
+});
 
-      if (passwordError != undefined) {
-         req.flash('passwordError', passwordError)
-         res.redirect('/user/edit/password/' + sessionId)
-      } else {
-         if (bcrypt.compareSync(oldPassword, user[0].password)) {
-            if (bcrypt.compareSync(newPassword, user[0].password)) {
-               passwordError = 'A nova senha não pode ser igual a anterior.'
-               req.flash('passwordError', passwordError)
-               res.redirect('/user/edit/password/' + sessionId)
-            } else {
-               var salt = bcrypt.genSaltSync(10)
-               var newHash = bcrypt.hashSync(newPassword, salt)
-               await database.where({
-                  id: sessionId
-               }).update({
-                  password: newHash
-               }).table('users').then(() => {
-                  successMsg = 'Senha alterada com sucesso.'
-                  req.flash('successMsg', successMsg)
-                  res.redirect('/user/edit')
-               }).catch(err => {
-                  passwordError = 'Não foi possível alterar a senha.'
-                  req.flash('passwordError', passwordError)
-                  res.redirect('/user/edit/password/' + sessionId)
-               })
-            }
-         } else {
-            passwordError = 'Senha incorreta.'
-            req.flash('passwordError', passwordError)
-            res.redirect('/user/edit/password/' + sessionId)
-         }
-      }
-   })
-})
+userRouter.post("/user/update/password", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
+  const { newPassword, oldPassword } = req.body;
 
-router.post('/user/delete', checkLogin, (req, res) => {
-   var sessionId = req.session.user.id
-   var success
+  const errors = {};
 
-   database.where({
-      id: sessionId
-   }).delete().table('users').then(() => {
-      success = 'Conta deletada com sucesso.'
-      req.flash('successMsg', success)
-      res.redirect('/user/signup')
-   }).catch(err => {
-      res.redirect('/user/edit')
-   })
-})
+  const [user] = await knex.select().where({ id }).table("users");
 
-module.exports = router
+  if (newPassword.length < 5)
+    errors.passwordError = "A nova senha não pode ter menos de 5 caracteres.";
+
+  if (Object.keys(errors).length > 0) {
+    req.flash("passwordError", errors.passwordError);
+    return res.redirect(`/user/edit/password/${id}`);
+  }
+
+  if (!bcryptjs.compareSync(oldPassword, user.password)) {
+    req.flash("passwordError", "Senha incorreta.");
+    return res.redirect(`/user/edit/password/${id}`);
+  }
+
+  try {
+    await knex
+      .where({ id })
+      .update({ password: hashSync(newPassword, 10) })
+      .table("users");
+
+    req.flash("successMsg", "Senha alterada com sucesso.");
+    res.redirect("/user/edit");
+  } catch (error) {
+    req.flash("passwordError", "Não foi possível alterar a senha.");
+    res.redirect(`/user/edit/password/${id}`);
+  }
+});
+
+userRouter.post("/user/delete", verifyAuth, async (req, res) => {
+  const { id } = req.session.user;
+
+  try {
+    await knex.where({ id }).delete().table("users");
+
+    req.flash("successMsg", "Conta deletada com sucesso.");
+    res.redirect("/user/signup");
+  } catch (error) {
+    res.redirect("/user/edit");
+  }
+});
+
+export { userRouter };

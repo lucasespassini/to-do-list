@@ -1,55 +1,35 @@
-import cookieParser from 'cookie-parser'
-import 'dotenv/config'
-import express from 'express'
-import flash from 'express-flash'
-import session from 'express-session'
-import noteController from '../controller/NoteController'
-import priorityController from '../controller/PriorityController'
-import toDoController from '../controller/ToDoController'
-import userController from '../controller/UserController'
-import { select } from '../database/connection'
-import { verifyAuth } from './middlewares/verifyAuth'
-const app = express()
+import cookieParser from "cookie-parser";
+import "dotenv/config";
+import express from "express";
+import flash from "express-flash";
+import session from "express-session";
+import { homeRouter } from "./controller/HomeController.js";
+import { noteRouter } from "./controller/NoteController.js";
+import { priorityRouter } from "./controller/PriorityController.js";
+import { todoRouter } from "./controller/ToDoController.js";
+import { userRouter } from "./controller/UserController.js";
+const app = express();
 
-app.set('view engine', 'ejs')
+app.set("view engine", "ejs");
 
-app.use(session({
-  secret: 'ie2109if',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }
-}))
-app.use(cookieParser('-2-8hf9-28hf'))
-app.use(flash())
-app.use(express.static('public'))
-app.use(express.urlencoded({ extended: false }))
-app.use(express.json())
+app.use(
+  session({
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  })
+);
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(flash());
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-app.use('/', userController)
-app.use('/', priorityController)
-app.use('/', toDoController)
-app.use('/', noteController)
+app.use("/", homeRouter);
+app.use("/", userRouter);
+app.use("/", priorityRouter);
+app.use("/", todoRouter);
+app.use("/", noteRouter);
 
-app.get('/', verifyAuth, async (req, res) => {
-  try {
-    const sessionId = req.session.user.id
-
-    const results = await Promise.all([
-      select().from('priorities').where({ userId: sessionId }),
-      select().from('to_dos').where({ userId: sessionId }),
-      select().from('notes').where({ userId: sessionId }),
-      select().from('users').where({ id: sessionId })
-    ])
-
-    res.render('index', {
-      priorities: results[0],
-      to_dos: results[1],
-      notes: results[2],
-      user: results[3][0]
-    })
-
-  } catch (error) {
-    console.log(error)
-    res.redirect('/')
-  }
-})
+app.listen(8080, () => console.log("Server started"));
