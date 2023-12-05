@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <%- include('../partials/flashError.ejs') %>
+    <%- include('../partials/flashSuccess.ejs') %>
+    <main class="container">
+      <form action="/user/create" method="post" class="sign-in-up">
+        <h1>Cadastro</h1>
+
+        <label for="nome">Nome</label>
+        <input
+          required
+          name="name"
+          id="nome"
+          placeholder="Digite seu nome"
+          value="<%= prevForm?.name %>"
+        />
+
+        <label for="email">Email</label>
+        <input
+          required
+          type="email"
+          name="email"
+          id="email"
+          placeholder="Digite seu email"
+          value="<%= prevForm?.email %>"
+        />
+
+        <label for="password">Senha</label>
+        <input
+          required
+          type="password"
+          name="password"
+          id="password"
+          id="password"
+          placeholder="Digite sua senha"
+        />
+
+        <button class="btn">Cadastrar</button>
+        <p><a href="/signin">Já tem uma conta?</a></p>
+      </form>
+    </main>
+  </body>
+</html>

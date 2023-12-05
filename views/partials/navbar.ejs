@@ -1,13 +1,11 @@
-<style>
-   .main-link {
-      text-decoration: none;
-      color: #000;
-   }
-</style>
-<header>
-   <a href="/" title="Ir para página principal" class="main-link"><h2 style="user-select: none">Olá <%= user.name.split(' ', 1) %></h2></a>
-   <div style="user-select: none">
-      <a href="/user/edit"><span style="padding: 0 15px" class="material-icons-round">person</span></a>
-      <a href="/user/logout"><span class="material-icons-round">logout</span></a>
-   </div>
-</header>
+<nav>
+  <a href="/" title="Ir para página principal" class="main-link">
+    <h2>Olá <%= user.name.split(' ', 1) %></h2>
+  </a>
+  <div>
+    <a href="/profile">
+      <span style="padding: 0 15px" class="material-icons-round">person</span>
+    </a>
+    <a href="/signout"><span class="material-icons-round">logout</span></a>
+  </div>
+</nav>
