@@ -12,15 +12,22 @@ const knex = Knex({
 });
 
 (async () => {
-  if (!(await knex.schema.hasTable("users"))) {
+  const [hasTableUsers, hasTablePriorities, hasTableToDos, hasTableNotes] = await Promise.all([
+    knex.schema.hasTable("users"),
+    knex.schema.hasTable("priorities"),
+    knex.schema.hasTable("to_dos"),
+    knex.schema.hasTable("notes"),
+  ])
+
+  if (!hasTableUsers)
     await knex.schema.createTable("users", (table) => {
       table.increments("id").primary().notNullable();
       table.string("name").notNullable();
       table.string("email").notNullable();
       table.string("password").notNullable();
     });
-  }
-  if (!(await knex.schema.hasTable("priorities"))) {
+
+  if (!hasTablePriorities)
     await knex.schema.createTable("priorities", (table) => {
       table.increments("id").primary();
       table
@@ -31,8 +38,8 @@ const knex = Knex({
         .notNullable();
       table.string("conteudo").notNullable();
     });
-  }
-  if (!(await knex.schema.hasTable("to_dos"))) {
+
+  if (!hasTableToDos)
     await knex.schema.createTable("to_dos", (table) => {
       table.increments("id").primary();
       table
@@ -43,8 +50,8 @@ const knex = Knex({
         .notNullable();
       table.string("conteudo").notNullable();
     });
-  }
-  if (!(await knex.schema.hasTable("notes"))) {
+
+  if (!hasTableNotes)
     await knex.schema.createTable("notes", (table) => {
       table.increments("id").primary();
       table
@@ -55,7 +62,7 @@ const knex = Knex({
         .notNullable();
       table.string("conteudo").notNullable();
     });
-  }
+
 })();
 
 export { knex };

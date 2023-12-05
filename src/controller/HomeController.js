@@ -20,7 +20,6 @@ homeRouter.get("/", verifyAuth, async (req, res) => {
   //   .leftJoin("to_dos", "users.id", "to_dos.userId")
   //   .leftJoin("notes", "users.id", "notes.userId")
   //   .where("users.id", id);
-
   // console.log(teste);
 
   res.render("index", {

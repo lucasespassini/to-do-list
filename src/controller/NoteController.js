@@ -22,10 +22,10 @@ noteRouter.post("/note/create", async (req, res) => {
 noteRouter.post("/note/delete", async (req, res) => {
   const { id } = req.body;
 
-  if (!id || isNaN(id)) res.redirect("/");
+  if (!id || isNaN(id)) return res.redirect("/");
 
   try {
-    await knex.where({ id }).delete().table("notes");
+    await knex.delete().where({ id }).table("notes");
     res.redirect("/");
   } catch (error) {
     res.redirect("/");

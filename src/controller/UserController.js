@@ -42,7 +42,7 @@ userRouter.post("/user/create", async (req, res) => {
     return res.redirect("/user/signup");
   }
 
-  const [user] = await knex.select().where({ email }).table("users");
+  const [user] = await knex.select('*').where({ email }).table("users");
 
   if (user) {
     req.flash("emailError", "Esse e-mail já está cadastrado.");
@@ -61,7 +61,7 @@ userRouter.post("/user/create", async (req, res) => {
     })
     .into("users");
 
-  const [newUser] = await knex.select().where({ email }).table("users");
+  const [newUser] = await knex.select('*').where({ email }).table("users");
 
   req.session.user = {
     id: newUser.id,
@@ -96,7 +96,7 @@ userRouter.post("/user/authenticate", async (req, res) => {
     return res.redirect("/user/signin");
   }
 
-  const [user] = await knex.select().where({ email }).table("users");
+  const [user] = await knex.select('*').where({ email }).table("users");
 
   if (!user) {
     req.flash("emailError", "Não existe usuário com esse e-mail.");
@@ -125,21 +125,21 @@ userRouter.get("/user/logout", verifyAuth, (req, res) => {
 userRouter.get("/user/edit", verifyAuth, async (req, res) => {
   const { id } = req.session.user;
 
-  const user = await knex.select().where({ id }).table("users");
+  const user = await knex.select('*').where({ id }).table("users");
 
   res.render("users/account", {
     successMsg: req.flash("successMsg"),
-    user: user[0],
+    user,
   });
 });
 
 userRouter.get("/user/edit/name", verifyAuth, async (req, res) => {
   const { id } = req.session.user;
 
-  const [user] = await knex.select().where({ id }).table("users");
+  const [user] = await knex.select('*').where({ id }).table("users");
   res.render("users/editName", {
     errors: { nameError: req.flash("nameError") },
-    user: user,
+    user,
   });
 });
 
@@ -148,7 +148,7 @@ userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
   const { name } = req.body;
 
   const errors = {};
-  const [user] = await knex.select().where({ id }).table("users");
+  const [user] = await knex.select('*').where({ id }).table("users");
 
   if (name === user.name)
     errors.nameError = "O nome digitado não pode ser igual ao anterior.";
@@ -161,7 +161,7 @@ userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
   }
 
   try {
-    await knex.where({ id }).update({ name }).table("users");
+    await knex.update({ name }).where({ id }).table("users");
     req.flash("successMsg", "Nome alterado com sucesso.");
     res.redirect("/user/edit");
   } catch (error) {
@@ -173,7 +173,7 @@ userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
 userRouter.get("/user/edit/password", verifyAuth, async (req, res) => {
   const { id } = req.session.user;
 
-  const [user] = await knex.select().where({ id }).table("users");
+  const [user] = await knex.select('*').where({ id }).table("users");
 
   res.render("users/editPassword", {
     errors: {
@@ -189,7 +189,7 @@ userRouter.post("/user/update/password", verifyAuth, async (req, res) => {
 
   const errors = {};
 
-  const [user] = await knex.select().where({ id }).table("users");
+  const [user] = await knex.select('*').where({ id }).table("users");
 
   if (newPassword.length < 5)
     errors.passwordError = "A nova senha não pode ter menos de 5 caracteres.";
@@ -206,8 +206,8 @@ userRouter.post("/user/update/password", verifyAuth, async (req, res) => {
 
   try {
     await knex
-      .where({ id })
       .update({ password: hashSync(newPassword, 10) })
+      .where({ id })
       .table("users");
 
     req.flash("successMsg", "Senha alterada com sucesso.");

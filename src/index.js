@@ -32,4 +32,5 @@ app.use("/", priorityRouter);
 app.use("/", todoRouter);
 app.use("/", noteRouter);
 
-app.listen(8080, () => console.log("Server started"));
+const PORT = process.env.PORT || 8080
+app.listen(PORT, () => console.log(`Started on http://localhost:${PORT}`));

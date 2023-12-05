@@ -22,10 +22,10 @@ priorityRouter.post("/priority/create", async (req, res) => {
 priorityRouter.post("/priority/delete", async (req, res) => {
   const { id } = req.body;
 
-  if (!id || isNaN(id)) res.redirect("/");
+  if (!id || isNaN(id)) return res.redirect("/");
 
   try {
-    await knex.where({ id }).delete().table("priorities");
+    await knex.delete().where({ id }).table("priorities");
     res.redirect("/");
   } catch (error) {
     res.redirect("/");
