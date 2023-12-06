@@ -21,3 +21,11 @@
 .material-symbols-rounded {
   margin-top: 5px;
 }
+
+.dark .navbar {
+  background-color: var(--darkMainColor);
+}
+
+.dark .navbar a {
+  color: var(--darkTextColor);
+}

@@ -2,7 +2,7 @@
 <html lang="pt-br">
   <%- include('../partials/head.ejs') %>
 
-  <body onload="defineTheme()">
+  <body>
     <%- include('../partials/flashError.ejs') %> <%-
     include('../partials/flashSuccess.ejs') %> <%-
     include('../partials/navbar.ejs') %>
@@ -11,7 +11,7 @@
       <div class="box">
         <header>
           <h2>Prioridades</h2>
-          <span id="open2" class="material-icons-round">add</span>
+          <span class="material-icons-round">add</span>
         </header>
 
         <div class="box-items">
@@ -33,16 +33,17 @@
       <div class="box">
         <header>
           <h2>A fazer</h2>
-          <span id="open2" class="material-icons-round">add</span>
+          <span class="material-icons-round">add</span>
         </header>
       </div>
 
       <div class="box">
         <header>
           <h2>Notas</h2>
-          <span id="open2" class="material-icons-round">add</span>
+          <span class="material-icons-round">add</span>
         </header>
       </div>
     </main>
   </body>
+  <%- include('../partials/scripts.ejs') %>
 </html>

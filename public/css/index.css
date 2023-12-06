@@ -5,6 +5,10 @@
   --lightBgColor: #e2e8f0;
   --lightMainColor: #f8fafc;
   --lightTextColor: #171717;
+
+  --darkBgColor: #020617;
+  --darkMainColor: #0f172a;
+  --darkTextColor: #cbd5e1;
 }
 
 ::-webkit-scrollbar {
@@ -34,6 +38,7 @@ body {
   color: var(--lightTextColor);
   background-color: var(--lightBgColor);
   font-family: "Righteous", cursive;
+  transition: 0.15s;
 }
 
 .material-icons-round,
@@ -59,8 +64,10 @@ body {
 }
 
 .box {
+  width: 100%;
+  max-width: 10vw;
   min-width: 300px;
-  height: 70vh;
+  height: 60vh;
   padding: 10px 15px;
   background-color: var(--lightMainColor);
   border-radius: 10px;
@@ -84,4 +91,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.dark .material-icons-round,
+.dark .material-symbols-rounded {
+  color: var(--darkTextColor);
+}
+
+.dark {
+  color: var(--darkTextColor);
+  background-color: var(--darkBgColor);
+}
+
+.dark .box {
+  background-color: var(--darkMainColor);
 }

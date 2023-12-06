@@ -27,6 +27,7 @@ const defineTheme = () => {
 };
 
 const toggleTheme = () => {
+  const body = document.body;
   const theme = localStorage.getItem("theme");
 
   switch (theme) {
@@ -37,10 +38,10 @@ const toggleTheme = () => {
       enableDarkMode();
       break;
     default:
-      if (body.classList.contains(Themes.DARK)) {
-        enableLightMode();
-        return;
-      }
-      enableDarkMode();
+      body.classList.contains(Themes.DARK)
+        ? enableLightMode()
+        : enableDarkMode();
   }
 };
+
+defineTheme();
