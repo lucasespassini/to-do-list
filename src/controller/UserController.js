@@ -47,10 +47,7 @@ userRouter.post("/user/create", async (req, res) => {
     })
     .into("users");
 
-  const [newUser] = await knex
-    .select("id, name, email")
-    .where({ email })
-    .table("users");
+  const [newUser] = await knex.select("*").where({ email }).table("users");
 
   req.session.user = {
     id: newUser.id,

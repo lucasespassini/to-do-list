@@ -1,11 +1,21 @@
-<nav>
-  <a href="/" title="Ir para página principal" class="main-link">
+<nav class="navbar">
+  <a href="/" title="Ir para página principal">
     <h2>Olá <%= user.name.split(' ', 1) %></h2>
   </a>
+
   <div>
+    <span
+      id="btn-theme"
+      class="material-symbols-rounded"
+      onclick="toggleTheme()"
+      onload="defineTheme()"
+      >dark_mode</span
+    >
     <a href="/profile">
-      <span style="padding: 0 15px" class="material-icons-round">person</span>
+      <span class="material-icons-round">person</span>
     </a>
-    <a href="/signout"><span class="material-icons-round">logout</span></a>
+    <a href="/signout">
+      <span class="material-icons-round">logout</span>
+    </a>
   </div>
 </nav>

@@ -19,8 +19,8 @@ priorityRouter.post("/priority/create", async (req, res) => {
   }
 });
 
-priorityRouter.post("/priority/delete", async (req, res) => {
-  const { id } = req.body;
+priorityRouter.post("/priority/delete/:id", async (req, res) => {
+  const { id } = req.params;
 
   if (!id || isNaN(id)) return res.redirect("/");
 
