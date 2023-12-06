@@ -19,8 +19,8 @@ noteRouter.post("/note/create", async (req, res) => {
   }
 });
 
-noteRouter.post("/note/delete", async (req, res) => {
-  const { id } = req.body;
+noteRouter.post("/note/delete/:id", async (req, res) => {
+  const { id } = req.params;
 
   if (!id || isNaN(id)) return res.redirect("/");
 

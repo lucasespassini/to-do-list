@@ -19,8 +19,8 @@ todoRouter.post("/to-do/create", async (req, res) => {
   }
 });
 
-todoRouter.post("/to-do/delete", async (req, res) => {
-  const { id } = req.body;
+todoRouter.post("/to-do/delete/:id", async (req, res) => {
+  const { id } = req.params;
 
   if (!id || isNaN(id)) return res.redirect("/");
 
