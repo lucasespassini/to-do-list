@@ -3,6 +3,26 @@
   <%- include('../partials/head.ejs') %>
   <body>
     <%- include('../partials/flashError.ejs') %>
+    <!--  -->
     <%- include('../partials/flashSuccess.ejs') %>
+    <!--  -->
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="profile-container">
+      <h1>Edição de dados</h1>
+
+      <section>
+        <div>
+          <p><%= user.name %></p>
+          <span class="material-icons-round">border_color</span>
+        </div>
+
+        <div>
+          <p><%= user.email %></p>
+          <span class="material-icons-round">border_color</span>
+        </div>
+      </section>
+    </main>
   </body>
+  <%- include('../partials/scripts.ejs') %>
 </html>

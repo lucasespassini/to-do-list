@@ -9,7 +9,7 @@ const enableDarkMode = () => {
   localStorage.setItem("theme", Themes.DARK);
   body.classList.add(Themes.DARK);
   body.classList.remove(Themes.LIGHT);
-  btnTheme.innerText = "light_mode";
+  if (btnTheme) btnTheme.innerText = "light_mode";
 };
 
 const enableLightMode = () => {
@@ -18,7 +18,7 @@ const enableLightMode = () => {
   localStorage.setItem("theme", Themes.LIGHT);
   body.classList.add(Themes.LIGHT);
   body.classList.remove(Themes.DARK);
-  btnTheme.innerText = "dark_mode";
+  if (btnTheme) btnTheme.innerText = "dark_mode";
 };
 
 const defineTheme = () => {

@@ -2,8 +2,8 @@
 <html lang="pt-br">
   <%- include('../partials/head.ejs') %>
   <body class="form-container">
-    <%- include('../partials/flashError.ejs') %>
-    <%- include('../partials/flashSuccess.ejs') %>
+    <%- include('../partials/flashError.ejs') %> <%-
+    include('../partials/flashSuccess.ejs') %>
 
     <form class="form" action="/user/create" method="post">
       <h1>Cadastro</h1>
@@ -49,4 +49,5 @@
       <p><a href="/signin">Já tem uma conta?</a></p>
     </form>
   </body>
+  <%- include('../partials/scripts.ejs') %>
 </html>

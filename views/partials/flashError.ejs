@@ -1,7 +1,7 @@
 <% if (errors.length > 0) { %>
-  <div class="c-error-msg">
-    <% errors.forEach(error => { %>
-      <p><%= error %></p>
-    <% }) %>
-  </div>
+<div class="flash-container flash-error">
+  <% errors.forEach(error => { %>
+  <p><%= error %></p>
+  <% }) %>
+</div>
 <% } %>
