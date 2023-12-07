@@ -1,10 +1,7 @@
-const Themes = {
-  DARK: "dark",
-  LIGHT: "light",
-};
+const Themes = { DARK: "dark", LIGHT: "light" };
 
 const enableDarkMode = () => {
-  const body = document.body;
+  const { body } = document;
   const btnTheme = document.getElementById("btn-theme");
   localStorage.setItem("theme", Themes.DARK);
   body.classList.add(Themes.DARK);
@@ -13,7 +10,7 @@ const enableDarkMode = () => {
 };
 
 const enableLightMode = () => {
-  const body = document.body;
+  const { body } = document;
   const btnTheme = document.getElementById("btn-theme");
   localStorage.setItem("theme", Themes.LIGHT);
   body.classList.add(Themes.LIGHT);
@@ -27,7 +24,7 @@ const defineTheme = () => {
 };
 
 const toggleTheme = () => {
-  const body = document.body;
+  const { body } = document;
   const theme = localStorage.getItem("theme");
 
   switch (theme) {

@@ -9,7 +9,7 @@
 
 .navbar div {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .navbar a {

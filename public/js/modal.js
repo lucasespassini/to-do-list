@@ -7,9 +7,7 @@ const ModalTypes = {
 /**
  * @param {Event} e
  */
-const stopPropagation = (e) => {
-  e.stopPropagation();
-};
+const stopPropagation = (e) => e.stopPropagation();
 
 /**
  * @param {HTMLElement} el
