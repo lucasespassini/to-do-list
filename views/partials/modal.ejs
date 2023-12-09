@@ -1,0 +1,20 @@
+<div class="modal" onclick="closeModal()">
+  <form
+    method="post"
+    id="form-modal"
+    class="modal-content"
+    onclick="stopPropagation(event)"
+  >
+    <span class="material-icons-round" onclick="closeModal()">close</span>
+
+    <textarea
+      cols="30"
+      rows="3"
+      name="conteudo"
+      placeholder="Digite aqui"
+      required
+    ></textarea>
+
+    <button class="button button-primary">Adicionar</button>
+  </form>
+</div>

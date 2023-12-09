@@ -3,24 +3,26 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "nodemon index.js",
-    "test": "npx autocannon -c 500 -d 30 --workers 10 --renderStatusCodes --latency --warmup [ -c 1 -d 2] http://localhost:8080/user/signin"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
-    "ejs": "^3.1.6",
-    "express": "^4.17.2",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
     "express-flash": "^0.0.2",
-    "express-session": "^1.17.2",
-    "knex": "^1.0.4",
-    "mysql2": "^2.3.3",
-    "validator": "^13.7.0"
+    "express-session": "^1.17.3",
+    "knex": "^3.0.1",
+    "mysql2": "^3.6.5",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
-    "autocannon": "^7.9.0"
+    "nodemon": "^3.0.2"
   }
 }

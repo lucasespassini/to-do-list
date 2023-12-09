@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <%- include('../partials/head.ejs') %>
+  <body class="form-container">
+    <%- include('../partials/flashError.ejs') %>
+    <form class="form" action="/user/authenticate" method="post">
+      <h1>Login</h1>
+
+      <div class="form-control">
+        <label for="email">Email</label>
+        <input
+          class="form-input"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Digite seu email"
+          required
+          value="<%= prevForm?.email %> "
+        />
+      </div>
+
+      <div class="form-control">
+        <label for="password">Senha</label>
+        <input
+          class="form-input"
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Digite sua senha"
+          required
+        />
+      </div>
+
+      <button class="button button-primary">Entrar</button>
+
+      <p><a href="/signup">Cadastre-se</a></p>
+    </form>
+  </body>
+  <%- include('../partials/scripts.ejs') %>
+</html>

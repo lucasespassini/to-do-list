@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <%- include('../partials/flashError.ejs') %>
+    <!--  -->
+    <%- include('../partials/flashSuccess.ejs') %>
+    <!--  -->
+    <%- include('../partials/navbar.ejs') %>
+    <!--  -->
+    <%- include('../partials/modal.ejs') %>
+
+    <main class="profile-container">
+      <h1>Edição de dados</h1>
+
+      <section>
+        <div>
+          <p><%= user.name %></p>
+          <a href="/profile/edit/name">
+            <span class="material-icons-round">border_color</span>
+          </a>
+        </div>
+
+        <div>
+          <p><%= user.email %></p>
+        </div>
+
+        <div>
+          <p>******</p>
+          <a href="/profile/edit/password">
+            <span class="material-icons-round">border_color</span>
+          </a>
+        </div>
+      </section>
+
+      <button
+        class="button button-danger"
+        id="delete-account"
+        onclick="openModal(this)"
+      >
+        Deletar conta
+      </button>
+    </main>
+  </body>
+  <%- include('../partials/scripts.ejs') %>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <%- include('../partials/flashError.ejs') %>
+    <!--  -->
+    <%- include('../partials/flashSuccess.ejs') %>
+    <!--  -->
+    <%- include('../partials/navbar.ejs') %>
+    <!--  -->
+    <%- include('../partials/modal.ejs') %>
+
+    <main class="container">
+      <div class="box">
+        <header>
+          <h2>Prioridades</h2>
+          <span
+            id="priority"
+            class="material-icons-round"
+            onclick="openModal(this)"
+          >
+            add
+          </span>
+        </header>
+
+        <div class="box-items">
+          <% priorities.forEach(priority => { %>
+          <div class="box-item">
+            <p><%= priority.conteudo %></p>
+            <form method="post" action="/priority/delete/<%= priority.id %>">
+              <button style="background-color: transparent; border: none">
+                <span class="material-icons-round">done</span>
+              </button>
+            </form>
+          </div>
+
+          <hr />
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="box">
+        <header>
+          <h2>A fazer</h2>
+          <span
+            id="todo"
+            class="material-icons-round"
+            onclick="openModal(this)"
+          >
+            add
+          </span>
+        </header>
+
+        <div class="box-items">
+          <% to_dos.forEach(todo => { %>
+          <div class="box-item">
+            <p><%= todo.conteudo %></p>
+            <form method="post" action="/to-do/delete/<%= todo.id %>">
+              <button style="background-color: transparent; border: none">
+                <span class="material-icons-round">done</span>
+              </button>
+            </form>
+          </div>
+
+          <hr />
+          <% }) %>
+        </div>
+      </div>
+
+      <div class="box">
+        <header>
+          <h2>Notas</h2>
+          <span
+            id="note"
+            class="material-icons-round"
+            onclick="openModal(this)"
+          >
+            add
+          </span>
+        </header>
+
+        <div class="box-items">
+          <% notes.forEach(note => { %>
+          <div class="box-item">
+            <p><%= note.conteudo %></p>
+            <form method="post" action="/note/delete/<%= note.id %>">
+              <button style="background-color: transparent; border: none">
+                <span class="material-icons-round">done</span>
+              </button>
+            </form>
+          </div>
+
+          <hr />
+          <% }) %>
+        </div>
+      </div>
+    </main>
+  </body>
+  <%- include('../partials/scripts.ejs') %>
+</html>

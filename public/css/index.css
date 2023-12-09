@@ -1,0 +1,69 @@
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Righteous&family=Sarala:wght@400;700&display=swap");
+
+:root {
+  --lightBgColor: #e2e8f0;
+  --lightMainColor: #f8fafc;
+  --lightTextColor: #171717;
+
+  --darkBgColor: #020617;
+  --darkMainColor: #0f172a;
+  --darkTextColor: #cbd5e1;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 5px 0;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  color: var(--lightTextColor);
+  background-color: var(--lightBgColor);
+  font-family: "Righteous", cursive;
+  transition: 0.15s;
+}
+
+a {
+  text-decoration: none;
+  color: var(--lightTextColor);
+}
+
+.material-icons-round,
+.material-symbols-rounded {
+  cursor: pointer;
+  transition: 0.1s;
+  user-select: none;
+}
+
+.material-icons-round:active,
+.material-symbols-rounded:active {
+  transform: rotate(10deg);
+}
+
+.dark .material-icons-round,
+.dark .material-symbols-rounded {
+  color: var(--darkTextColor);
+}
+
+.dark {
+  color: var(--darkTextColor);
+  background-color: var(--darkBgColor);
+}

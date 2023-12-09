@@ -1,0 +1,7 @@
+<% if (errors.length > 0) { %>
+<div class="flash-container flash-error">
+  <% errors.forEach(error => { %>
+  <p><%= error %></p>
+  <% }) %>
+</div>
+<% } %>

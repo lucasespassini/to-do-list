@@ -1,0 +1,31 @@
+.navbar {
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: var(--lightMainColor);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.navbar div {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar a {
+  color: var(--lightTextColor);
+  text-decoration: none;
+}
+
+.navbar .material-icons-round,
+.material-symbols-rounded {
+  margin-top: 5px;
+}
+
+.dark .navbar {
+  background-color: var(--darkMainColor);
+}
+
+.dark .navbar a {
+  color: var(--darkTextColor);
+}

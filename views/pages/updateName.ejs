@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <%- include('../partials/head.ejs') %>
+  <body>
+    <%- include('../partials/flashError.ejs') %>
+    <!--  -->
+    <%- include('../partials/navbar.ejs') %>
+
+    <main class="form-container" style="margin-top: 10%">
+      <form class="form" action="/user/update/name" method="post">
+        <h1>Alterar nome</h1>
+
+        <div class="form-control">
+          <label for="name">Nome</label>
+          <input
+            class="form-input"
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Digite seu novo nome"
+            required
+          />
+        </div>
+
+        <button class="button button-primary">Alterar</button>
+      </form>
+    </main>
+  </body>
+  <%- include('../partials/scripts.ejs') %>
+</html>
