@@ -17,3 +17,12 @@
 .button-primary:hover {
   background-color: #1e40af;
 }
+
+.button-danger {
+  background-color: #dc2626;
+  color: #f0f9ff;
+}
+
+.button-danger:hover {
+  background-color: #f11212;
+}

@@ -8,6 +8,7 @@ const userRouter = Router();
 userRouter.get("/signup", (req, res) => {
   res.render("pages/signup", {
     errors: req.flash("errors"),
+    messages: req.flash("messages"),
     prevForm: req.flash("prevForm")[0],
   });
 });
@@ -55,6 +56,7 @@ userRouter.post("/user/create", async (req, res) => {
     name: newUser.name,
   };
 
+  req.flash("messages", `Seja bem vindo(a) ${newUser.name.split(" ")[0]}`);
   res.redirect("/");
 });
 
@@ -119,7 +121,7 @@ userRouter.get("/profile", verifyAuth, async (req, res) => {
 userRouter.get("/profile/edit/name", verifyAuth, async (req, res) => {
   const { user } = req.session;
 
-  res.render("users/editName", {
+  res.render("pages/updateName", {
     errors: req.flash("errors"),
     user,
   });
@@ -145,7 +147,7 @@ userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
     await knex.update({ name }).where({ id: user.id }).table("users");
     req.session.user = { ...user, name };
     req.flash("messages", "Nome alterado com sucesso.");
-    res.redirect("/profile/edit");
+    res.redirect("/profile");
   } catch (error) {
     req.flash("errors", "Não foi possível alterar o nome.");
     res.redirect("/profile/edit/name");
@@ -155,7 +157,7 @@ userRouter.post("/user/update/name", verifyAuth, async (req, res) => {
 userRouter.get("/profile/edit/password", verifyAuth, async (req, res) => {
   const { user } = req.session;
 
-  res.render("users/editPassword", {
+  res.render("pages/updatePassword", {
     errors: req.flash("errors"),
     user,
   });
@@ -181,12 +183,12 @@ userRouter.post("/user/update/password", verifyAuth, async (req, res) => {
 
   try {
     await knex
-      .update({ password: hashSync(newPassword, 10) })
+      .update({ password: bcryptjs.hashSync(newPassword, 10) })
       .where({ id })
       .table("users");
 
     req.flash("messages", "Senha alterada com sucesso.");
-    res.redirect("/profile/edit");
+    res.redirect("/profile");
   } catch (error) {
     req.flash("errors", "Não foi possível alterar a senha.");
     res.redirect("/profile/edit/password");
@@ -203,7 +205,7 @@ userRouter.post("/user/delete", verifyAuth, async (req, res) => {
     res.redirect("/signup");
   } catch (error) {
     req.flash("errors", "Não foi possível deletar sua conta.");
-    res.redirect("/user/edit");
+    res.redirect("/profile");
   }
 });
 

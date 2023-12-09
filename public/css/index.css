@@ -41,6 +41,11 @@ body {
   transition: 0.15s;
 }
 
+a {
+  text-decoration: none;
+  color: var(--lightTextColor);
+}
+
 .material-icons-round,
 .material-symbols-rounded {
   cursor: pointer;

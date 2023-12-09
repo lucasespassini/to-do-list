@@ -7,6 +7,8 @@
     <%- include('../partials/flashSuccess.ejs') %>
     <!--  -->
     <%- include('../partials/navbar.ejs') %>
+    <!--  -->
+    <%- include('../partials/modal.ejs') %>
 
     <main class="profile-container">
       <h1>Edição de dados</h1>
@@ -14,14 +16,30 @@
       <section>
         <div>
           <p><%= user.name %></p>
-          <span class="material-icons-round">border_color</span>
+          <a href="/profile/edit/name">
+            <span class="material-icons-round">border_color</span>
+          </a>
         </div>
 
         <div>
           <p><%= user.email %></p>
-          <span class="material-icons-round">border_color</span>
+        </div>
+
+        <div>
+          <p>******</p>
+          <a href="/profile/edit/password">
+            <span class="material-icons-round">border_color</span>
+          </a>
         </div>
       </section>
+
+      <button
+        class="button button-danger"
+        id="delete-account"
+        onclick="openModal(this)"
+      >
+        Deletar conta
+      </button>
     </main>
   </body>
   <%- include('../partials/scripts.ejs') %>

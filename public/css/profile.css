@@ -1,8 +1,33 @@
 .profile-container {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
 
+.profile-container h1,
+.profile-container button {
+  margin: 20px 0;
+}
 
+.profile-container section {
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profile-container section div {
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-radius: 10px;
+  background-color: var(--lightMainColor);
+}
+
+.dark .profile-container section div {
+  background-color: var(--darkMainColor);
+}

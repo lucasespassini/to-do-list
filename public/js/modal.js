@@ -2,6 +2,7 @@ const ModalTypes = {
   PRIORITY: "priority",
   TODO: "todo",
   NOTE: "note",
+  DELETE_ACCOUNT: "delete-account",
 };
 
 /**
@@ -26,6 +27,18 @@ const openModal = (el) => {
       break;
     case ModalTypes.NOTE:
       modalForm.setAttribute("action", "/note/create");
+      break;
+    case ModalTypes.DELETE_ACCOUNT:
+      modalForm.setAttribute("action", "/user/delete");
+      modalForm.children.item(1).remove();
+      modalForm.children.item(1).remove();
+      const title = document.createElement("h3");
+      title.textContent = "Confirmar deleção da conta?";
+      const button = document.createElement("button");
+      button.innerHTML = "Confirmar";
+      button.classList.add("button", "button-danger");
+      modalForm.append(title);
+      modalForm.append(button);
       break;
   }
 };
